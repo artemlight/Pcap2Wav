@@ -23,10 +23,10 @@ def _parse_sdpplin_line(item):
     e.g. AvgPacketSize:integer;744 => (AvgPacketSize,744)
     """
     name = item.split(':')[0]
-    value = item[len(name)+ 1:]
+    value = item[len(name) + 1:]
     if value.find(';') != -1:
-        #type = value.split(';')[0]
-        #value = value[len(type) + 1:]
+        # type = value.split(';')[0]
+        # value = value[len(type) + 1:]
         type, sep, value = value.partition(';')
         if type == 'integer':
             value = int(value)
@@ -36,21 +36,24 @@ def _parse_sdpplin_line(item):
             value = value[1:-1]
     return name, value
 
+
 class SDPMediaDesc:
     """ Holds the (a)ttribute and (b)andwidth values for an SDP Media Desc """
-    def __init__(self,value):
+
+    def __init__(self, value):
         #   m=<media> <port> <transport> <fmt list>
-        self.media, self.port, self.transport, self.fmt_list = value.split(' ',3)
+        self.media, self.port, self.transport, self.fmt_list = value.split(' ', 3)
         self.a = []
         self.b = []
         self.port = int(self.port)
-        #self.media = ''
-        #self.port = 0
-        #self.transport = ''
-        #self.fmt_list = []
+        # self.media = ''
+        # self.port = 0
+        # self.transport = ''
+        # self.fmt_list = []
+
 
 class SDPParser:
-    def __init__(self, data = None):
+    def __init__(self, data=None):
         """ Parses a full SDP data string.
         Alternatively, send lines to the parseLine method. """
         self.v = []
@@ -70,13 +73,11 @@ class SDPParser:
         self.start_time = None
         self.stop_time = None
 
-
         if data is None:
             return
-        lines = [ l for l in data.split('\r\n') if l ]
+        lines = [l for l in data.split('\r\n') if l]
         for line in lines:
             self.parseLine(line)
-
 
     def parseLine(self, line):
         """ Parses an SDP line. SDP protocol requires lines be parsed in order
@@ -89,15 +90,15 @@ class SDPParser:
             self.protocol_version = value
         elif type == 'o':
             self.o.append(value)
-        elif type == 's': # Session Name
+        elif type == 's':  # Session Name
             self.s.append(value)
             self.session_name = value
-        elif type == 'i': # Session Description
+        elif type == 'i':  # Session Description
             self.i.append(value)
             self.session_desc = value
-        elif type == 'c': # Session Description
+        elif type == 'c':  # Session Description
             pass
-        elif type =='t': # Time
+        elif type == 't':  # Time
             try:
                 start_time, stop_time = ['t' for t in value.split(' ')]
             except ValueError:
@@ -113,8 +114,10 @@ class SDPParser:
             self.last_desc = SDPMediaDesc(value)
             self.media_descriptions[self.last_desc.media] = self.last_desc
         elif type == 'b':
-            self.last_desc.b.append(value)
+            # self.last_desc.b.append(value)
+            pass
+        elif type == 'L':
+            pass
         else:
             # Need to add email and phone
             raise TypeError('Unknown type: %s' % type)
-
