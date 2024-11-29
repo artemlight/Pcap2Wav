@@ -100,7 +100,7 @@ args = parser.parse_args()
 # Can be true or false, depending on TCPDump version.
 # If you're experiencing some weird exceptions in DPKT - try to change this to false.
 # Also, you can check a dump in Wireshark - if no Ethernet headers there you have to use this option
-new_tcpdump_format = True
+new_tcpdump_format = args.new_tcpdump_format
 
 # Establish the connection
 conn = pymysql.connect(
