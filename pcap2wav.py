@@ -3,9 +3,7 @@ import dpkt
 import gzip
 import socket
 import ipaddress
-import argparse
 from collections import namedtuple
-import os
 import struct
 import sdpparser
 import wave

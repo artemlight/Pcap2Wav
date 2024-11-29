@@ -1,17 +1,10 @@
+import os.path
+
 import pymysql
 import datetime
-import dpkt
-import gzip
-import socket
-import ipaddress
 import argparse
-from collections import namedtuple
-import os
-import struct
-import wave
-import audioop
-import base64
-from .pcap2wav import pcap2wav
+
+from pcap2wav import pcap2wav
 
 from datetime import datetime
 
@@ -30,7 +23,7 @@ parser.add_argument(
     "--caller-ids",
     type=int,
     nargs="+",
-    default=[],
+    required=True,
     help="List of caller IDs (space-separated integers).",
 )
 
@@ -55,6 +48,14 @@ parser.add_argument(
     "--new-tcpdump-format",
     action="store_true",
     help="Enable the new tcpdump format if specified. Defaults to False.",
+)
+
+# MySQL connection parameters
+parser.add_argument(
+    "--output-directory",
+    type=str,
+    required=True,
+    help="Directory to out .wav files.",
 )
 
 # MySQL connection parameters
@@ -138,5 +139,6 @@ for calldate, duration, caller, called, fbasename in cur:
     print(calldate, ': ', caller, '->', called, sep='')
     rtp_path = f"{basepath}/{calldate.strftime('%Y-%m-%d/%H/%M')}/RTP/{fbasename}.pcap"
     sip_path = f"{basepath}/{calldate.strftime('%Y-%m-%d/%H/%M')}/SIP/{fbasename}.pcap"
-    pcap2wav(sip_path, rtp_path, str(calldate).replace(':', '-') + ' ' + caller + ' - ' + called + '.wav',
-             new_tcpdump_format=new_tcpdump_format)
+    out_fn = f"{str(calldate).replace(':', '-')} {caller} - {called}.wav"
+    out_fn = os.path.join(args.output_directory, out_fn)
+    pcap2wav(sip_path, rtp_path, out_fn, new_tcpdump_format=new_tcpdump_format)

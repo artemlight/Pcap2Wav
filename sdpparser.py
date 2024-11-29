@@ -18,6 +18,7 @@
 
 import base64
 
+
 def _parse_sdpplin_line(item):
     """ Returns a (name,value) tuple when given an Sdpplin attribute
     e.g. AvgPacketSize:integer;744 => (AvgPacketSize,744)
